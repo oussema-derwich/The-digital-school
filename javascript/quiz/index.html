@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .quiz-container {
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #message {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz</h1>
+        <p id="question"></p>
+        <ul id="answers"></ul>
+        <p id="message"></p>
+        <button id="next-btn">Suivant</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Quelle est la capitale de la France ?",
+                answers: ["Londres", "Berlin", "Paris"],
+                correctAnswer: "Paris",
+            },
+            {
+                question: "Quelle est la capitale de la palestine ?",
+                answers: ["tunis", "rome", "kodes"],
+                correctAnswer: "kodes",
+            },
+            {
+                question: "Quelle planète est surnommée la 'Planète Rouge' ?",
+                answers: ["Mars", "Vénus", "Mercure"],
+                correctAnswer: "Mars",
+            },
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 10;
+        let timer;
+
+        const questionElement = document.getElementById("question");
+        const answersElement = document.getElementById("answers");
+        const messageElement = document.getElementById("message");
+        const nextButton = document.getElementById("next-btn");
+
+        function displayQuestion() {
+            if (currentQuestion < questions.length) {
+                const question = questions[currentQuestion];
+                questionElement.textContent = question.question;
+                answersElement.innerHTML = "";
+
+                question.answers.forEach((answer, index) => {
+                    const answerItem = document.createElement("li");
+                    const label = document.createElement("label");
+                    const radio = document.createElement("input");
+
+                    radio.type = "radio";
+                    radio.name = "answer";
+                    radio.value = answer;
+                    radio.id = `answer${index}`;
+                    label.appendChild(radio);
+
+                    const answerText = document.createTextNode(answer);
+                    label.appendChild(answerText);
+
+                    answerItem.appendChild(label);
+
+                    answersElement.appendChild(answerItem);
+                });
+
+                startTimer();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 10;
+            clearInterval(timer);
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (timeLeft === 0) {
+                clearInterval(timer);
+                checkAnswer();
+            } else {
+                timeLeft--;
+            }
+        }
+
+        function checkAnswer() {
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+
+            if (selectedAnswer) {
+                const correctAnswer = questions[currentQuestion].correctAnswer;
+                if (selectedAnswer.value === correctAnswer) {
+                    score++;
+                }
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function endQuiz() {
+            if (score === questions.length) {
+                messageElement.textContent = "Bravo ! Vous avez répondu correctement à toutes les questions.";
+            } else {
+                messageElement.textContent = `Vous avez ${score} réponses correctes sur ${questions.length}.`;
+                nextButton.style.display = "none";
+            }
+        }
+
+        nextButton.addEventListener("click", () => {
+            checkAnswer();
+        });
+
+        displayQuestion();
+    </script>
+</body>
+</html>

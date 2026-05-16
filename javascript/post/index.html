@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #e2e1e0;
+        }
+
+        .card {
+            width: 500px;
+            height: 800px;
+            border: 1px solid grey; /* Ajout d'une valeur pour l'épaisseur de la bordure */
+            margin-left: 35%;
+            margin-top: 50px;
+        }
+
+        .img-card img {
+            width: 500px;
+            height: 500px;
+        }
+
+        .icons {
+            display: inline;
+            color: white;
+            justify-content: space-around;
+            position: absolute;
+            top: 70px;
+            left: 900px;
+            text-shadow: 1px 1px 2px black, 0 0 25px rgb(255, 255, 255), 0 0 5px rgb(255, 255, 255);
+        }
+
+        .icons i {
+            width: 40px;
+            height: auto;
+            font-size: 25px;
+        }
+
+        .comments-section {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+        }
+
+        .comments-section h3 {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .comment-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .comment-item strong {
+            color: #333;
+        }
+
+        .comment-item p {
+            margin: 5px 0 0 0;
+            color: #555;
+        }
+
+        .no-comments {
+            color: #999;
+            font-style: italic;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <section class="card">
+        <div class="img-card">
+            <img src="post.jpg" alt="image">
+        </div>
+        <div class="icons">
+            <i class="fas fa-heart like-icon"></i> <!-- Utilisation de la classe "fas" pour les icônes pleines -->
+            <span id="like-count">0</span>
+            <i class="far fa-comment comment-icon"></i> <!-- Utilisation de la classe "far" pour les icônes vides -->
+            <span id="comment-count">0</span>
+        </div>
+        <div class="comments-section">
+            <h3>Commentaires</h3>
+            <div id="comments-list">
+                <p class="no-comments">Aucun commentaire pour le moment</p>
+            </div>
+        </div>
+    </section>
+    <script>
+        const likeIcon = document.querySelector('.like-icon');
+        const commentIcon = document.querySelector('.comment-icon');
+        const likeCount = document.getElementById('like-count');
+        const commentCount = document.getElementById('comment-count');
+        const commentsList = document.getElementById('comments-list');
+
+        let likes = 0;
+        let comments = [];
+
+        likeIcon.addEventListener('click', () => {
+            likes++;
+            likeCount.textContent = likes;
+        });
+
+        commentIcon.addEventListener('click', () => {
+            const newComment = prompt("Ajouter un commentaire :");
+            if (newComment !== null && newComment.trim() !== "") {
+                comments.push(newComment);
+                commentCount.textContent = comments.length;
+                displayComments();
+            }
+        });
+
+        function displayComments() {
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<p class="no-comments">Aucun commentaire pour le moment</p>';
+                return;
+            }
+
+            commentsList.innerHTML = comments.map((comment, index) => `
+                <div class="comment-item">
+                    <strong>Utilisateur</strong>
+                    <p>${comment}</p>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

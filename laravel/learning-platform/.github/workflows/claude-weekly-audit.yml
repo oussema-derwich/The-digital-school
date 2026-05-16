@@ -1,0 +1,45 @@
+name: Audit hebdomadaire Claude
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_tools: "mcp__github__create_issue,mcp__github__list_issues,Read,Grep,Glob,LS,Bash(git log*),Bash(git diff*),Bash(find*),Bash(cat*)"
+          prompt: |
+            Analyse ce repo en profondeur. Cree une Issue GitHub
+            intitulee "Audit Claude - semaine du $(date +%d/%m/%Y)".
+
+            Structure l Issue ainsi :
+            ## Etat general
+            [1 paragraphe de synthese]
+
+            ## Priorite haute
+            [bugs visibles, failles de securite, dependances vulnerables]
+
+            ## Priorite moyenne
+            [dependances obsoletes, code mort, TODOs anciens]
+
+            ## Priorite basse
+            [docs manquantes, refacto lisibilite, typos]
+
+            ## Points positifs
+            [ce qui est bien fait]
+
+            Sois precis : cite les fichiers et lignes concernes.

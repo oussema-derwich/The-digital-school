@@ -1,0 +1,74 @@
+name: Rapport global de tous les repos
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  id-token: write
+
+jobs:
+  rapport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: "--allowedTools mcp__github__list_repositories,mcp__github__get_repository,mcp__github__get_file_contents,mcp__github__list_repository_contents,Read,Bash(git*),Bash(echo*),Bash(cat*),Bash(ls*),Bash(tee*),Bash(mkdir*) --max-turns 80"
+          prompt: |
+            Tu es un auditeur technique senior.
+
+            ETAPE 1 — Liste tous les repos de houssemRouabeh via
+            mcp__github__list_repositories avec owner="houssemRouabeh".
+
+            ETAPE 2 — Pour chaque repo (ignore _claude-manager),
+            lis via mcp__github__get_file_contents :
+            - README.md (si existe)
+            - package.json ou composer.json (si existe)
+            - liste des fichiers racine via mcp__github__list_repository_contents
+
+            ETAPE 3 — Construis le contenu du rapport complet en memoire,
+            puis ecris-le avec cette commande bash exacte :
+
+            Bash("cat > /home/runner/work/_claude-manager/_claude-manager/RAPPORT.md << 'ENDRAPPORT'\n[CONTENU COMPLET ICI]\nENDRAPPORT")
+
+            Puis commite avec :
+            Bash("cd /home/runner/work/_claude-manager/_claude-manager && git add RAPPORT.md && git commit -m 'feat: rapport audit global' && git push origin HEAD")
+
+            Structure OBLIGATOIRE du rapport :
+
+            # Rapport audit global — 14/04/2026
+
+            ## Legende
+            Remplace [ ] par [x] pour confirmer une action, [~] pour ignorer.
+
+            ---
+
+            ## NOM_REPO
+
+            **Description** : ce que fait le projet en 1 phrase
+            **Stack** : technologies detectees
+            **Derniere activite** : date dernier commit
+            **Etat** : Actif / Maintenance / Abandon / Vide
+
+            ### Actions proposees
+            - [ ] SECURITE : fichier exact + description
+            - [ ] DEPS : mettre a jour X de vA vers vB
+            - [ ] DOCS : ce qui manque precisement
+            - [ ] REFACTO : ce qui peut etre ameliore
+            - [ ] TESTS : ce qui manque
+
+            ---
+
+            ## Recapitulatif
+            | Repo | Etat | Actions |
+            |------|------|---------|
+            | nom | Actif | 4 |
+
+            PRIORITE ABSOLUE : le git push final est obligatoire.
+            Sans lui le fichier est perdu.

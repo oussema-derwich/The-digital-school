@@ -1,0 +1,37 @@
+{
+  "name": "bigscreen-survey",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "backend:install": "cd backend && composer install",
+    "backend:setup": "cd backend && php artisan key:generate && php artisan migrate:fresh --seed",
+    "backend:serve": "cd backend && php artisan serve",
+    "setup": "npm install && npm run backend:install && npm run backend:setup"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "chart.js": "^4.5.0",
+    "lucide-react": "^0.344.0",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.61.1",
+    "react-hot-toast": "^2.5.2",
+    "react-router-dom": "^6.26.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.2"
+  }
+}

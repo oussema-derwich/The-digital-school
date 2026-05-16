@@ -1,0 +1,34 @@
+name: Code quality auto-fix
+
+on:
+  schedule:
+    - cron: "0 9 * * 3"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Sur une nouvelle branche "chore/auto-cleanup",
+            effectue ces ameliorations de lisibilite :
+
+            1. Supprime les imports/requires inutilises
+            2. Ajoute un commentaire JSDoc/PHPDoc aux fonctions
+               publiques qui n en ont pas
+            3. Corrige les typos dans commentaires et strings
+            4. Renomme les variables a 1-2 lettres si le contexte
+               permet un nom plus explicite
+
+            INTERDIT : ne change aucune logique, aucun algorithme.
+            Ouvre une PR avec la liste precise des changements.
+            Si tu ne trouves rien a ameliorer, ne cree pas de branche.

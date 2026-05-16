@@ -1,0 +1,36 @@
+name: Security and dependencies audit
+
+on:
+  schedule:
+    - cron: "0 9 * * 5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Effectue un audit de securite et dependances :
+
+            1. Lis package.json ou composer.json selon le projet
+            2. Identifie les dependances avec des versions obsoletes
+            3. Verifie s il y a des secrets hardcodes
+
+            Actions :
+            - Mises a jour PATCH et MINOR safe : cree une PR
+              titre "chore: update dependencies"
+            - Mises a jour MAJOR : cree une Issue explicative
+            - Secrets trouves : cree une Issue urgente avec
+              la localisation exacte (JAMAIS le secret lui-meme)
+
+            Si tout est propre, cree une Issue "Audit securite OK".
